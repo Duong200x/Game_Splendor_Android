@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+    <base href="$FLUTTER_BASE_HREF" />
+
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta
+      name="description"
+      content="Splendor – Game cờ bài ma thuật đa người chơi online"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Splendor" />
+    <meta name="theme-color" content="#0D1117" />
+
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/Icon-192.png" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <title>Splendor Online</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <style>
+      /* Prevent iOS bounce scroll */
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #0d1117;
+        position: fixed;
+      }
+
+      /* Loading screen */
+      #loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #0d1117;
+        z-index: 9999;
+      }
+
+      #loading h1 {
+        color: #f59e0b;
+        font-family: serif;
+        font-size: 2rem;
+        letter-spacing: 4px;
+        margin-bottom: 16px;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(245, 158, 11, 0.2);
+        border-top-color: #f59e0b;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading overlay sẽ tự ẩn khi Flutter load xong -->
+    <div id="loading">
+      <h1>✦ SPLENDOR ✦</h1>
+      <div class="spinner"></div>
+    </div>
+
+    <script>
+      window.addEventListener("flutter-first-frame", function () {
+        const loading = document.getElementById("loading");
+        if (loading) {
+          loading.style.opacity = "0";
+          loading.style.transition = "opacity 0.5s ease";
+          setTimeout(() => loading.remove(), 500);
+        }
+      });
+    </script>
+
+    <script src="flutter_bootstrap.js" async></script>
+  </body>
+</html>
