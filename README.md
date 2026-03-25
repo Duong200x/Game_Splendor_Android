@@ -1,108 +1,186 @@
 # Splendor Fake
 
-Flutter multiplayer card game inspired by Splendor, built with Firebase realtime rooms and optional Agora voice chat on mobile.
+Game thẻ bài nhiều người chơi lấy cảm hứng từ Splendor, xây dựng bằng Flutter, Firebase và voice chat Agora trên mobile.
 
-![CI](https://github.com/Duong200x/App-Web/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Duong200x/Game_Splendor_Android/actions/workflows/ci.yml/badge.svg)
 
-## Overview
+## Giới thiệu
 
-This project is useful in a portfolio because it demonstrates a different kind of engineering strength from `dien-nuoc-app`.
+Đây là game online theo lượt, cho phép người chơi đăng nhập, vào phòng, thiết lập bàn chơi và chơi realtime với nhau trên cùng một room Firestore.
 
-Instead of business workflow automation, this repo shows:
+Ngoài chế độ online, dự án còn có:
 
-- realtime multiplayer room handling
-- transaction-safe game-state updates
-- host migration and stale-player cleanup
-- timeout-based turn progression
-- cross-platform design with mobile voice chat and web fallback
+- chế độ tập luyện ngay trên máy
+- màn hình xem luật chơi
+- kho thẻ để xem nhanh bộ bài và tài nguyên
+- voice chat trên mobile
 
-It is not just a static board UI. There is real online state management behind it.
-
-## Architecture Preview
+## Xem nhanh kiến trúc
 
 ![Splendor architecture](docs/images/architecture-overview.svg)
 
-## Main Features
+## Chức năng nổi bật
 
-- Google Sign-In with Firebase Auth
-- Firestore-backed rooms and realtime multiplayer state
-- Turn-based gameplay with tokens, cards, nobles, and scoring
-- Host-only start flow and configurable room settings
-- Timeout handling for turns
-- Presence heartbeat and stale-player cleanup
-- Reserved-card visibility rules
-- Sound effects and game feedback
-- Optional Agora voice chat on mobile
-- Web support for UI/gameplay with voice-chat stub fallback
+- Đăng nhập Google và lưu hồ sơ người chơi
+- 5 bàn online realtime bằng Firestore
+- Chơi Splendor theo lượt với token, thẻ, quý tộc và tính điểm
+- Host chỉnh cấu hình bàn chơi trước khi bắt đầu
+- Đồng bộ thời gian lượt chơi và tự hết lượt khi hết giờ
+- Dọn người chơi treo và xử lý rời phòng
+- Voice chat trên mobile
+- Chế độ tập luyện ngay trong app
 
-## Tech Stack
+## Toàn bộ chức năng hiện có trong game
 
-| Technology | Purpose |
+### 1. Tài khoản và hồ sơ người chơi
+
+- Đăng nhập bằng Google Sign-In
+- Lưu hồ sơ người chơi vào Firestore
+- Chỉnh tên hiển thị
+- Chọn avatar cho người chơi
+- Hiển thị avatar trong sảnh, phòng và bàn chơi
+- Đăng xuất tài khoản
+
+### 2. Sảnh và điều hướng trong app
+
+- Màn hình luật chơi
+- Chế độ `Tập Luyện`
+- Màn hình `Kho Thẻ` để xem bộ bài và tài nguyên
+- Danh sách các bàn online theo thời gian thực
+- Hiển thị trạng thái từng bàn
+- Hiển thị số người chơi hiện tại trên từng bàn
+- Tự khôi phục các room mặc định nếu bị thiếu trong Firestore
+
+### 3. Phòng online
+
+- 5 phòng cố định `room_1` đến `room_5`
+- Vào phòng từ sảnh
+- Rời phòng bất cứ lúc nào
+- Tự rejoin khi người chơi quay lại đúng room
+- Hiển thị danh sách người chơi trong phòng
+- Hiển thị chủ phòng
+- Chặn vào nếu phòng đã đầy
+- Host chỉnh số người chơi tối đa
+- Host chỉnh thời gian mỗi lượt
+- Host chỉnh số điểm chiến thắng
+- Host bắt đầu ván khi đủ điều kiện
+- Đồng bộ thay đổi phòng theo thời gian thực
+
+### 4. Gameplay online
+
+- Chơi theo lượt nhiều người
+- Đồng bộ trạng thái game realtime qua Firestore
+- Lấy 3 token khác màu
+- Lấy 2 token cùng màu khi đủ điều kiện
+- Không cho lấy vượt luật
+- Mua thẻ phát triển từ bàn
+- Giữ thẻ mở trên bàn
+- Giữ thẻ úp từ chồng bài
+- Nhận vàng khi giữ thẻ nếu ngân hàng còn
+- Giới hạn số thẻ giữ trên tay
+- Tính bonus vĩnh viễn từ thẻ đã mua
+- Tự kiểm tra đủ tài nguyên để mua thẻ
+- Tự trả token về ngân hàng khi mua
+- Tự nhận quý tộc khi đủ điều kiện
+- Tính điểm realtime
+- Kết thúc game khi đạt mốc điểm thắng
+- Hiển thị màn hình chiến thắng
+
+### 5. Đồng bộ lượt chơi và an toàn trạng thái
+
+- Đồng bộ timer lượt chơi
+- Hiển thị thời gian còn lại của lượt hiện tại
+- Tự hết lượt khi hết thời gian
+- Force end turn khi cần
+- Presence heartbeat khi đang ở trong bàn
+- Tự dọn người chơi stale/inactive
+- Chuyển host nếu host cũ rời phòng
+- Xử lý host rời khi đang trong game
+- Xử lý người chơi thường rời khi đang trong game
+- Reset session đúng theo vòng đời room
+- Dùng Firestore transaction cho các thao tác quan trọng để tránh ghi đè sai trạng thái
+
+### 6. Giao diện bàn chơi
+
+- Hiển thị avatar tất cả người chơi
+- Viền timer theo người đang đến lượt
+- Hiển thị token đang có của từng người chơi
+- Hiển thị bonus từ thẻ đã mua
+- Hiển thị quý tộc đã nhận
+- Hiển thị điểm hiện tại
+- Hiển thị thẻ đang giữ
+- Hiển thị các hàng thẻ theo cấp
+- Hiển thị ngân hàng token
+- Hiển thị thanh điều khiển cho người chơi hiện tại
+- Toast thông báo hành động hợp lệ/không hợp lệ
+- Animation khi lấy token và cập nhật trạng thái
+
+### 7. Voice chat
+
+- Voice chat theo room trên mobile
+- Bật/tắt microphone ngay trong bàn chơi
+- Tách riêng service voice để web vẫn chạy gameplay bình thường
+- Dùng token server riêng cho Agora
+
+### 8. Chế độ tập luyện
+
+- Vào game ngay không cần room online
+- Chơi theo luật Splendor trên máy
+- Có timer lượt
+- Có bot xử lý lượt tự động
+- Tính điểm và xác định người thắng
+
+## Công nghệ sử dụng
+
+| Công nghệ | Vai trò |
 | --- | --- |
-| Flutter | Cross-platform client |
-| Firebase Auth | Sign-in and user identity |
-| Cloud Firestore | Room data and realtime game state |
-| Provider / shared_preferences | App state helpers and local preferences |
-| Agora RTC | Mobile voice chat |
-| Node + Vercel | Token server for Agora |
-| GitHub Actions | Analyze and test workflow |
+| Flutter | Client đa nền tảng |
+| Firebase Auth | Đăng nhập và định danh người chơi |
+| Cloud Firestore | Room realtime và game state |
+| Provider / shared_preferences | Hỗ trợ state và cấu hình cục bộ |
+| Agora RTC | Voice chat mobile |
+| Node + Vercel | Token server cho Agora |
+| GitHub Actions | Workflow kiểm tra mã nguồn |
 
-## What Is Technically Interesting Here
-
-- `OnlineGameManager` uses Firestore transactions to protect turn logic and reduce race conditions.
-- The room lifecycle handles host leave, stale players, and session reset.
-- The online board screen coordinates countdown, heartbeat, reserved-card visibility, and action gating.
-- Mobile voice chat is isolated behind a service abstraction so the web build can fall back safely.
-
-Important files:
-
-- `lib/logic/online_game_manager.dart`: game-state transitions and room maintenance
-- `lib/screens/game_room_screen.dart`: room join/leave/start flow
-- `lib/screens/online_game_board_screen.dart`: board UI, heartbeat, timer, and action handling
-- `lib/services/voice_service_mobile.dart`: Agora mobile integration
-- `agora-token-server/api/token.js`: token endpoint example
-
-## Project Structure
+## Cấu trúc dự án
 
 ```text
 splendor_fake/
 |-- lib/
-|   |-- screens/       # UI screens
-|   |-- logic/         # online game manager and game logic
-|   |-- models/        # room/game entities
+|   |-- screens/       # các màn hình chính
+|   |-- logic/         # game logic và online game manager
+|   |-- models/        # entity room/game/player
 |   |-- services/      # voice service abstraction
-|   |-- widgets/       # board widgets and effects
+|   |-- widgets/       # widget bàn chơi, thẻ, token, quý tộc
 |-- test/
 |-- agora-token-server/
 |-- docs/images/
 |-- android/ ios/ web/
 ```
 
-## Local Setup
+## Cài đặt và chạy local
 
-### Requirements
+### Yêu cầu
 
 - Flutter SDK 3.x
-- Firebase project with Auth and Firestore
-- Optional Agora project if mobile voice chat is enabled
+- Firebase project có Auth và Firestore
+- Agora project nếu muốn bật voice chat mobile
 
-### Install dependencies
+### Cài package
 
 ```bash
 flutter pub get
 ```
 
-### Firebase setup
+### Cấu hình Firebase
 
-This repo intentionally does not commit machine/project-specific Firebase config files.
-
-Missing files you must provide:
+Các file cấu hình Firebase theo máy/project không được commit trực tiếp trong repo. Khi chạy local, cần chuẩn bị:
 
 - `android/app/google-services.json`
-- `ios/Runner/GoogleService-Info.plist` if targeting iOS
+- `ios/Runner/GoogleService-Info.plist` nếu build iOS
 - `lib/firebase_options.dart`
 
-Recommended setup:
+Có thể tạo nhanh bằng FlutterFire:
 
 ```bash
 dart pub global activate flutterfire_cli
@@ -110,73 +188,44 @@ flutterfire configure
 flutter pub get
 ```
 
-There is a placeholder example file:
+Repo có sẵn file mẫu:
 
 - `lib/firebase_options.example.dart`
 
-CI copies that example file only to keep analysis/test running. It is not a real production config.
-
-### Run app
+### Chạy app
 
 ```bash
 flutter run
 ```
 
-### Run on web
+### Chạy web
 
 ```bash
 flutter run -d chrome
 ```
 
-## Firestore Data Model
+## Cấu trúc dữ liệu Firestore
 
-Main collections used by the app:
+Các collection chính:
 
-- `splendor_users/{uid}`: player profile
-- `splendor_rooms/{roomId}`: room info, players, status, host, settings, and `gameState`
-- `splendor_time/now`: server-time synchronization helper for turn countdown
+- `splendor_users/{uid}`: hồ sơ người chơi
+- `splendor_rooms/{roomId}`: thông tin phòng, danh sách người chơi, cấu hình và game state
+- `splendor_time/now`: đồng bộ thời gian máy chủ cho timer lượt
 
-Rules and indexes included in the repo:
+Repo có sẵn:
 
 - `firestore.rules`
 - `firestore.indexes.json`
 
-## Firestore Rules For Shared Firebase Projects
+## Voice chat Agora
 
-If you use the same Firebase project for both `splendor_fake` and another app such as `dien-nuoc-app`, remember:
+Voice chat là tính năng tùy chọn trên mobile.
 
-- Firestore rules belong to the whole database, not to one app
-- publishing rules for one app can break the other app if namespaces are not merged
-
-This project currently expects its own namespace:
-
-- `splendor_users`
-- `splendor_rooms`
-- `splendor_time`
-
-If the same Firebase project also contains the electricity/water app, you must keep a merged ruleset that also preserves the other app's namespace, for example `/rooms/**`.
-
-A practical pattern is:
-
-- keep `/rooms/**` locked to the electricity/water admin account
-- allow signed-in users to read and update `splendor_rooms/room_1` to `room_5`
-- allow signed-in users to access `splendor_time`
-
-If room join shows `cloud_firestore/permission-denied`, the first thing to check is your published Firestore Rules.
-
-## Voice Chat Setup
-
-Voice chat is optional and mobile-focused.
-
-The mobile service currently requests tokens from:
-
-- `lib/services/voice_service_mobile.dart`
-
-The repo includes a sample token server:
+Repo có sẵn ví dụ token server tại:
 
 - `agora-token-server/`
 
-### Local token server
+Chạy local token server:
 
 ```bash
 cd agora-token-server
@@ -185,128 +234,31 @@ copy .env.example .env
 vercel dev
 ```
 
-Required environment variables:
+Biến môi trường cần có:
 
 - `AGORA_APP_ID`
 - `AGORA_APP_CERTIFICATE`
 
-After that, update the token endpoint URL in `lib/services/voice_service_mobile.dart`.
+Sau đó cập nhật endpoint token trong `lib/services/voice_service_mobile.dart`.
 
-## Android Build Notes
+## Ghi chú khi dùng chung Firebase project với app khác
 
-This app can use both:
+Nếu cùng một Firebase project đang được dùng cho nhiều app khác nhau, Firestore Rules cần được quản lý theo kiểu hợp nhất vì rules áp dụng cho toàn bộ database.
 
-- native Firebase Android config via `android/app/google-services.json`
-- generated FlutterFire config via `lib/firebase_options.dart`
+Namespace chính của game hiện tại là:
 
-On Android, this can cause confusion if Firebase is initialized incorrectly.
+- `splendor_users`
+- `splendor_rooms`
+- `splendor_time`
 
-Current behavior in `main.dart`:
+## Build Android
 
-- web uses `DefaultFirebaseOptions.currentPlatform`
-- Android/iOS uses the default native Firebase app
-
-This avoids the common error:
-
-```text
-[core/duplicate-app] A Firebase App named "[DEFAULT]" already exists
+```bash
+flutter clean
+flutter pub get
+flutter build apk --release
 ```
 
-If you see that error again:
-
-1. make sure `google-services.json` matches the same Firebase project as `firebase_options.dart`
-2. run `flutter clean`
-3. run `flutter pub get`
-4. rebuild the app
-
-## APK Test Checklist
-
-Before creating a release APK, test these flows on Android:
-
-1. Google Sign-In works
-2. Room list loads correctly
-3. Join room works without `permission-denied`
-4. Leave room works
-5. Host can start game
-6. Entering the online board screen works
-7. Voice chat can initialize or fail gracefully
-
-This checklist catches most Firebase and release-build issues early.
-
-## Verification Status
-
-- GitHub Actions workflow runs `flutter analyze` and `flutter test`
-- Current automated test coverage is still minimal
-- The repository currently contains only a dummy test in `test/widget_test.dart`
-
-So the project already shows CI awareness, but test depth still needs work.
-
-## Why This Project Is Good For An Intern Portfolio
-
-- It demonstrates multiplayer thinking, not only UI implementation.
-- It shows you can manage realtime state and prevent invalid player actions.
-- It shows architectural separation through service abstraction and transaction-based logic.
-- It is more ambitious than a typical student Flutter CRUD app.
-
-## Current Limitations
-
-- The biggest screen file is still very large and should be split further
-- Automated tests are still too shallow for the complexity of the game logic
-- README still needs real gameplay screenshots or a demo video
-- Firebase and Agora setup are not one-command simple yet
-- Voice chat endpoint is currently hardcoded and should be environment-driven
-- Shared Firebase projects require careful Firestore rules management
-
-## Suggested Next Improvements
-
-- Add gameplay screenshots or a short multiplayer demo clip
-- Add unit tests for `OnlineGameManager`
-- Move hardcoded voice endpoint to env/config
-- Split `online_game_board_screen.dart` into smaller widgets/controllers
-- Add a short architecture note explaining transaction flow and turn validation
-- Add a script or dedicated repo folder for deploying the merged Firestore rules safely
-
-## Troubleshooting
-
-### Room join fails with `permission-denied`
-
-Most likely cause:
-
-- published Firestore rules are too strict for `splendor_rooms`
-
-Check:
-
-- the user is signed in
-- the room id matches `room_1` to `room_5`
-- your published rules allow updates to `splendor_rooms`
-
-### App opens to white screen or crashes on startup
-
-Most likely cause:
-
-- Firebase duplicate initialization or mismatched Android config
-
-Check:
-
-- `android/app/google-services.json`
-- `lib/firebase_options.dart`
-- `main.dart` Firebase initialization logic
-
-### Voice chat fails but game still loads
-
-That is expected when:
-
-- the Agora token server is offline
-- the endpoint URL is wrong
-- microphone permission is denied
-
-Gameplay should still work even if voice chat is unavailable.
-
-## Notes
-
-- `pubspec.yaml` has been updated to describe the project more clearly for portfolio review.
-- This repository does not yet define a formal open-source license file.
-
-## Author
+## Tác giả
 
 Built by [Tran Dinh Duong](https://github.com/Duong200x).
