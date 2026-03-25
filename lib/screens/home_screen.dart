@@ -57,6 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
         .collection(AppConstants.collectionRooms)
         .doc(roomId);
     final now = _nowMs;
+    final myUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    if (myUid.isEmpty) return;
 
     try {
       await FirebaseFirestore.instance.runTransaction((tx) async {
@@ -68,6 +71,13 @@ class _HomeScreenState extends State<HomeScreen> {
         if (status != 'waiting') return;
 
         final oldPlayers = _playersFrom(data['players']);
+        final amInRoom =
+            oldPlayers.any((p) => (p['uid'] ?? '').toString() == myUid);
+
+        // Chỉ dọn phòng mà chính user hiện tại đang tham gia.
+        // Nếu không, rules chặt sẽ từ chối vì user không phải player của room đó.
+        if (!amInRoom) return;
+
         final kept = oldPlayers.where((p) => !_isPlayerStale(p, now)).toList();
         if (kept.length == oldPlayers.length) return;
 

@@ -1,44 +1,76 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
     function signedIn() {
       return request.auth != null;
     }
 
-    // 1. Chặn bên collection "rooms" của dự án khác
-    // Chỉ cho phép admin UID được truy cập (dựa trên tài khoản quanly@diennuoc.com)
-    match /rooms/{document=**} {
-      allow read, write: if signedIn() && request.auth.uid == "0qLfPFJrkRV8t7HltKExz5eMfbJ2";
+    function currentUid() {
+      return request.auth.uid;
     }
 
-    // 2. Cấu hình cho Splendor Online
-    
-    // Hồ sơ người chơi: Mỗi người chỉ được sửa của chính mình
+    function isDienNuocAdmin() {
+      return signedIn() && currentUid() == "0qLfPFJrkRV8t7HltKExz5eMfbJ2";
+    }
+
+    function hasPlayersAfter() {
+      return request.resource.data.players is list;
+    }
+
+    function hasPlayersBefore() {
+      return resource.data.players is list;
+    }
+
+    function amPlayerAfter() {
+      return hasPlayersAfter()
+        && request.resource.data.players.exists(p, p.uid == currentUid());
+    }
+
+    function amPlayerBefore() {
+      return hasPlayersBefore()
+        && resource.data.players.exists(p, p.uid == currentUid());
+    }
+
+    // Namespace của dien-nuoc-app.
+    // App này dùng collection /rooms/** nên phải giữ rule riêng,
+    // nếu không khi deploy rule từ project khác lên cùng Firebase thì app điện nước hoặc Splendor sẽ chặn nhau.
+    match /rooms/{document=**} {
+      allow read, write: if isDienNuocAdmin();
+    }
+
+    // Hồ sơ người chơi Splendor: ai đăng nhập cũng đọc được,
+    // nhưng chỉ chủ tài khoản mới được tạo/cập nhật hồ sơ của mình.
     match /splendor_users/{uid} {
       allow read: if signedIn();
-      allow create, update: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && currentUid() == uid;
       allow delete: if false;
     }
 
-    // Phòng chơi Splendor: room_1 đến room_5
+    // Phòng chơi Splendor: room_1 đến room_5.
+    // - create: cho phép tạo room mặc định
+    // - update: cho phép nếu user là player trước khi ghi hoặc là player sau khi ghi
+    //   -> hợp lệ cho join, leave, heartbeat, host start game, host chỉnh phòng.
     match /splendor_rooms/{roomId} {
       allow read: if signedIn();
-      
-      // Chỉ cho phép tạo các phòng mặc định (room_1..5)
+
       allow create: if signedIn() && roomId.matches('room_[1-5]');
 
-      // Cho phép cập nhật nếu người chơi có trong danh sách players (dùng để Join, Host chỉnh settings, Heartbeat)
       allow update: if signedIn()
-        && (request.resource.data.players is list)
-        && request.resource.data.players.exists(p, p.uid == request.auth.uid);
-      
+        && roomId.matches('room_[1-5]')
+        && hasPlayersAfter()
+        && (amPlayerBefore() || amPlayerAfter());
+
       allow delete: if false;
     }
 
-    // Đồng bộ thời gian máy chủ (splendor_time/now)
+    // Đồng bộ thời gian máy chủ cho Splendor.
     match /splendor_time/{docId} {
       allow read, write: if signedIn();
+    }
+
+    // Mặc định chặn toàn bộ namespace khác.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

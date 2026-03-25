@@ -108,7 +108,7 @@ class _OnlineGameBoardScreenState extends State<OnlineGameBoardScreen> {
     }
 
     // Khởi tạo VoiceService (Agora trên mobile, no-op trên web)
-    _voiceService = createPlatformVoiceService();
+    _voiceService = createVoiceService();
     _voiceService.init(
       channelId: widget.roomId,
       myUid: myUid,

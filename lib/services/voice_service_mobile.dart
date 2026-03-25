@@ -2,7 +2,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'voice_service_stub.dart';
+import 'voice_service_base.dart';
 
 /// Agora implementation cho Android/iOS
 class MobileVoiceService extends VoiceService {

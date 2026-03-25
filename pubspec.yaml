@@ -1,5 +1,5 @@
 name: splendor_fake
-description: A new Flutter project.
+description: Multiplayer Splendor-inspired Flutter game with Firebase realtime rooms and optional Agora voice chat.
 publish_to: "none"
 version: 1.0.0+1
 

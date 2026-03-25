@@ -10,10 +10,28 @@ import 'screens/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase khởi tạo với options đúng theo platform
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Web cần options sinh từ FlutterFire.
+  // Android/iOS đã có cấu hình native nên dùng default app để tránh duplicate-app.
+  try {
+    if (kIsWeb) {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } else {
+        Firebase.app();
+      }
+    } else {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp();
+      } else {
+        Firebase.app();
+      }
+    }
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') rethrow;
+    Firebase.app();
+  }
 
   // Quét ảnh avatar — chỉ trên mobile
   if (!kIsWeb) {
