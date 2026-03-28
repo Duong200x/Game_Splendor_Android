@@ -15,6 +15,36 @@ Ngoài chế độ online, dự án còn có:
 - kho thẻ để xem nhanh bộ bài và tài nguyên
 - voice chat trên mobile
 
+## Ảnh giao diện và video demo
+
+### Demo Video
+
+- [Xem video demo](Demo.mp4)
+
+### 1. Màn sảnh chính
+
+![Màn sảnh chính](docs/screenshots/sanh.jpg)
+
+### 2. Màn thông tin và hồ sơ người chơi
+
+![Màn thông tin người chơi](docs/screenshots/thongtin.jpg)
+
+### 3. Màn thư viện thẻ
+
+![Màn thư viện thẻ](docs/screenshots/thuvien.jpg)
+
+### 4. Màn phòng chờ
+
+![Màn phòng chờ](docs/screenshots/phongcho.jpg)
+
+### 5. Màn cài đặt phòng
+
+![Màn cài đặt phòng](docs/screenshots/settingphongcho.jpg)
+
+### 6. Màn gameplay
+
+![Màn gameplay](docs/screenshots/gameplay.jpg)
+
 ## Xem nhanh kiến trúc
 
 ![Splendor architecture](docs/images/architecture-overview.svg)
